@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Action ou Vérité / أكشن لو الصحيح</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#150821;
+    --bg-2:#2a0f47;
+    --pink:#ff3d7f;
+    --pink-soft:#ff8fb3;
+    --cyan:#1fe6e0;
+    --gold:#ffcd3c;
+    --card:#1f0e33;
+    --card-edge:#3a1a5c;
+    --text:#f4ecff;
+    --text-dim:#c2aee0;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(255,61,127,0.25), transparent 45%),
+      radial-gradient(circle at 90% 15%, rgba(31,230,224,0.18), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(255,205,60,0.12), transparent 45%),
+      linear-gradient(160deg, var(--bg-1), var(--bg-2) 60%, #0e0418);
+    background-attachment:fixed;
+    font-family:'Tajawal', 'Cairo', sans-serif;
+    color:var(--text);
+    overflow-x:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding:14px 16px 20px;
+    position:relative;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:6px 2px 12px;
+    flex-shrink:0;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .logo-dot{
+    width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, var(--gold), var(--pink) 70%);
+    box-shadow:0 0 14px 3px rgba(255,61,127,0.7);
+    flex-shrink:0;
+  }
+  .title{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:1.12rem;
+    letter-spacing:0.3px;
+    line-height:1.1;
+    background:linear-gradient(90deg, var(--gold), var(--pink) 60%, var(--cyan));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .title small{
+    display:block;
+    font-size:0.6rem;
+    font-weight:700;
+    color:var(--text-dim);
+    -webkit-text-fill-color:var(--text-dim);
+    letter-spacing:1px;
+  }
+  .lang-toggle{
+    display:flex;
+    background:rgba(255,255,255,0.06);
+    border:1px solid var(--card-edge);
+    border-radius:999px;
+    padding:3px;
+    gap:3px;
+    flex-shrink:0;
+  }
+  .lang-toggle button{
+    border:none; background:transparent; color:var(--text-dim);
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:0.72rem;
+    padding:6px 12px; border-radius:999px; cursor:pointer; transition:.25s;
+  }
+  .lang-toggle button.active{
+    background:linear-gradient(135deg, var(--pink), #ff6f9c);
+    color:#1a0a26; box-shadow:0 2px 10px rgba(255,61,127,0.5);
+  }
+
+  /* ---------- Step indicator ---------- */
+  .steps{ display:flex; gap:6px; justify-content:center; margin:2px 0 16px; flex-shrink:0; }
+  .step-dot{ width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.15); transition:.3s; }
+  .step-dot.active{ width:24px; border-radius:6px; background:linear-gradient(135deg, var(--pink), var(--gold)); }
+  .step-dot.done{ background:var(--cyan); }
+
+  /* ---------- Screens ---------- */
+  .screen{ display:none; flex-direction:column; flex:1; }
+  .screen.active{ display:flex; animation:fadeSlide .4s ease; }
+  @keyframes fadeSlide{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .screen-title{
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:1.3rem;
+    margin:4px 0 6px; color:var(--text);
+  }
+  .screen-sub{
+    font-size:0.82rem; color:var(--text-dim); margin:0 0 18px; line-height:1.5;
+  }
+
+  /* ---------- Players screen ---------- */
+  .player-add-row{ display:flex; gap:8px; margin-bottom:14px; }
+  .player-input{
+    flex:1; background:rgba(0,0,0,0.25); border:1px solid var(--card-edge);
+    border-radius:14px; padding:13px 14px; color:var(--text);
+    font-family:'Tajawal',sans-serif; font-size:0.92rem; outline:none; min-width:0;
+  }
+  .player-input:focus{ border-color:var(--pink); }
+  .player-input::placeholder{ color:var(--text-dim); }
+  .player-add-btn{
+    border:none; border-radius:14px; padding:0 20px;
+    background:linear-gradient(135deg, var(--gold), #ffe089); color:#1a0a26;
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:1.2rem; cursor:pointer; flex-shrink:0;
+  }
+  .players-list-wrap{ flex:1; min-height:60px; }
+  .players-list{ display:flex; flex-wrap:wrap; gap:9px; align-content:flex-start; }
+  .player-chip{
+    display:flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.06); border:1px solid var(--card-edge);
+    border-radius:999px; padding:7px 8px 7px 12px; font-size:0.86rem; font-weight:700; color:var(--text);
+  }
+  [dir="rtl"] .player-chip{ padding:7px 12px 7px 8px; }
+  .chip-num{
+    width:20px; height:20px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg, var(--cyan), #5af0ec); color:#0c2624;
+    display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:900;
+  }
+  .player-chip .rm{
+    width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,0.12);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-size:0.72rem; color:var(--text-dim); flex-shrink:0;
+  }
+  .players-empty{
+    font-size:0.85rem; color:var(--text-dim); text-align:center; margin-top:26px; line-height:1.6;
+  }
+  .players-empty .big{ font-size:2.2rem; display:block; margin-bottom:8px; }
+  .shuffle-btn{
+    width:100%; border:1px dashed var(--card-edge); background:rgba(255,255,255,0.03);
+    color:var(--text-dim); font-family:'Cairo',sans-serif; font-weight:800; font-size:0.85rem;
+    border-radius:14px; padding:12px; cursor:pointer; margin:14px 0 6px; transition:.2s;
+  }
+  .shuffle-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .shuffle-btn:not(:disabled):active{ transform:scale(0.98); border-color:var(--gold); color:var(--gold); }
+
+  .bottom-action{ margin-top:auto; padding-top:14px; flex-shrink:0; }
+  .hint-line{ text-align:center; font-size:0.74rem; color:var(--text-dim); margin-bottom:8px; min-height:16px; }
+  .primary-btn{
+    width:100%; border:none; border-radius:18px; padding:16px;
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:1rem; cursor:pointer;
+    color:#160a26; background:linear-gradient(135deg, var(--pink), var(--gold));
+    box-shadow:0 10px 24px rgba(255,61,127,0.35); transition:.2s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .primary-btn:disabled{
+    background:rgba(255,255,255,0.08); color:var(--text-dim); box-shadow:none; cursor:not-allowed;
+  }
+  .primary-btn:not(:disabled):active{ transform:scale(0.97); }
+
+  /* ---------- Mode screen ---------- */
+  .back-btn{
+    align-self:flex-start; background:rgba(255,255,255,0.06); border:1px solid var(--card-edge);
+    color:var(--text-dim); font-family:'Cairo',sans-serif; font-weight:700; font-size:0.78rem;
+    border-radius:12px; padding:8px 14px; cursor:pointer; margin-bottom:14px;
+  }
+  .mode-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px; overflow-y:auto; padding-bottom:6px;
+  }
+  .mode-card{
+    border:1px solid var(--card-edge); background:rgba(255,255,255,0.04); border-radius:18px;
+    padding:16px 12px; cursor:pointer; transition:.2s; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .mode-card .ic{ font-size:1.9rem; }
+  .mode-card .nm{ font-family:'Cairo',sans-serif; font-weight:800; font-size:0.92rem; color:var(--text); }
+  .mode-card .tg{ font-size:0.7rem; color:var(--text-dim); line-height:1.4; }
+  .mode-card.selected{
+    border-color:var(--pink); background:rgba(255,61,127,0.14);
+    box-shadow:0 6px 18px rgba(255,61,127,0.25); transform:translateY(-2px);
+  }
+
+  /* ---------- Game screen ---------- */
+  .game-top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-shrink:0; }
+  .icon-btn{
+    width:38px; height:38px; border-radius:12px; border:1px solid var(--card-edge);
+    background:rgba(255,255,255,0.05); color:var(--text-dim); font-size:1.05rem;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .game-mode-pill{
+    flex:1; margin:0 10px; text-align:center; font-family:'Cairo',sans-serif; font-weight:800;
+    font-size:0.85rem; color:var(--gold); background:rgba(255,205,60,0.1);
+    border:1px solid rgba(255,205,60,0.3); border-radius:999px; padding:9px 6px; cursor:pointer;
+  }
+
+  .order-strip{ 
+    display:flex !important; 
+    gap:8px; justify-content:center; overflow-x:auto; 
+    padding:4px 2px 12px; flex-shrink:0;
+    min-height:50px;
+  }
+  .order-av{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0;
+    background:rgba(255,255,255,0.12); border:2px solid rgba(255,255,255,0.15);
+    display:flex !important; align-items:center; justify-content:center;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:0.82rem; color:var(--text-dim);
+    transition:.3s;
+  }
+  .order-av.current{
+    background:linear-gradient(135deg, var(--pink), var(--gold)); color:#1a0a26;
+    border-color:var(--gold); transform:scale(1.22);
+    box-shadow:0 0 18px rgba(255,205,60,0.7);
+  }
+
+  .turn-banner{ 
+    display:flex !important; 
+    align-items:center; justify-content:center; gap:6px; 
+    margin-bottom:10px; min-height:28px; flex-shrink:0;
+  }
+  .turn-banner .name{ 
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:1.05rem; 
+    color:var(--gold); 
+    text-shadow:0 0 12px rgba(255,205,60,0.5);
+  }
+
+  .stage{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:relative; min-height:300px; perspective:1400px;
+  }
+  .card{
+    width:100%; aspect-ratio:3/4; max-height:400px; position:relative;
+    border-radius:26px; transform-style:preserve-3d; transition:transform .65s cubic-bezier(.2,.8,.25,1);
+  }
+  .card.flipped{ transform:rotateY(180deg); }
+  .face{
+    position:absolute; inset:0; border-radius:26px; backface-visibility:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:28px 22px; overflow:hidden;
+  }
+  .face-front{ background:linear-gradient(160deg, var(--card), #150a24 75%); border:1px solid var(--card-edge); }
+  .face-front::before{
+    content:""; position:absolute; inset:-2px; border-radius:27px;
+    background:conic-gradient(from 0deg, var(--pink), var(--gold), var(--cyan), var(--pink));
+    opacity:0.55; z-index:-1; filter:blur(18px); animation:spin 6s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .face-front .big-emoji{ font-size:3.4rem; margin-bottom:14px; filter:drop-shadow(0 4px 14px rgba(255,61,127,0.5)); }
+  .face-front .hint{ font-family:'Cairo',sans-serif; font-weight:800; font-size:1.02rem; color:var(--text); }
+  .face-front .hint-sub{ font-size:0.76rem; color:var(--text-dim); margin-top:8px; }
+  .face-back{
+    background:linear-gradient(165deg, #24103d, #160a26 80%); border:1px solid var(--card-edge);
+    transform:rotateY(180deg); justify-content:flex-start; padding-top:24px;
+  }
+  .tag{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:0.72rem; margin-bottom:16px; letter-spacing:0.5px;
+  }
+  .tag.truth{ background:rgba(31,230,224,0.16); color:var(--cyan); border:1px solid rgba(31,230,224,0.4); }
+  .tag.dare{ background:rgba(255,61,127,0.16); color:var(--pink-soft); border:1px solid rgba(255,61,127,0.4); }
+  .prompt-text{ font-size:1.14rem; line-height:1.55; font-weight:500; color:var(--text); padding:0 4px; }
+
+  .controls{ display:flex; gap:12px; margin-top:18px; flex-shrink:0; }
+  .btn-pick{
+    flex:1; border:none; border-radius:18px; padding:16px 8px;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:0.95rem; cursor:pointer; color:#160a26;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-pick:active{ transform:scale(0.96); }
+  .btn-pick.truth{ background:linear-gradient(135deg, var(--cyan), #5af0ec); box-shadow:0 8px 20px rgba(31,230,224,0.3); }
+  .btn-pick.dare{ background:linear-gradient(135deg, var(--pink), #ff7aa6); box-shadow:0 8px 20px rgba(255,61,127,0.35); }
+  .btn-pick span.emo{ font-size:1.4rem; }
+
+  .secondary-row{
+    display:flex; justify-content:center; align-items:center; margin-top:12px; flex-shrink:0;
+  }
+  .turn-counter{ font-size:0.76rem; color:var(--text-dim); font-weight:700; display:flex; align-items:center; gap:6px; }
+  .turn-counter b{ color:var(--gold); }
+
+  /* confetti */
+  .confetti{
+    position:fixed; top:-10px; width:8px; height:14px; border-radius:2px; z-index:50;
+    pointer-events:none; animation:fall linear forwards;
+  }
+  @keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:0.2; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .face-front::before{ animation:none; }
+    .card{ transition:none; }
+    .screen.active{ animation:none; }
+  }
+
+  /* ===== EPIC OVERLAY ===== */
+  #epicOvl{
+    display:none;
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    width:100%;height:100%;
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  #epicOvl.show{ display:flex; }
+  #ovlBg{ position:absolute;inset:0; }
+  #spinRing{
+    position:absolute;
+    width:min(300px,80vw); height:min(300px,80vw);
+    border-radius:50%;
+    border:5px solid transparent;
+    border-top-color:#ff3d7f; border-right-color:#ffcd3c;
+    border-bottom-color:#1fe6e0; border-left-color:#c770ff;
+    box-shadow:0 0 40px rgba(255,61,127,.6),inset 0 0 30px rgba(199,112,255,.2);
+    opacity:0; transform:scale(.4);
+    transition:opacity .3s,transform .3s;
+    pointer-events:none; z-index:2;
+  }
+  #spinRing.on{ opacity:1; transform:scale(1); }
+  #spinInner{
+    position:absolute;
+    width:min(180px,50vw); height:min(180px,50vw);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:3.5rem;
+    opacity:0; transform:scale(.3);
+    transition:opacity .4s .1s,transform .4s .1s cubic-bezier(.175,.885,.32,1.4);
+    pointer-events:none; z-index:3;
+  }
+  #spinInner.on{ opacity:1; transform:scale(1); }
+  #resCard{
+    position:absolute;
+    width:min(340px,88vw);
+    background:rgba(18,6,36,.95);
+    border:2px solid var(--oc,#ff3d7f);
+    border-radius:28px;
+    padding:28px 24px 24px;
+    text-align:center;
+    opacity:0; transform:scale(.6) translateY(40px);
+    transition:opacity .45s,transform .45s cubic-bezier(.175,.885,.32,1.275);
+    z-index:10;
+    box-shadow:0 0 50px var(--oc,#ff3d7f),0 24px 60px rgba(0,0,0,.8);
+    pointer-events:none;
+  }
+  #resCard.show{ opacity:1; transform:scale(1) translateY(0); pointer-events:all; }
+  #rcBadge{
+    display:inline-block; padding:6px 18px; border-radius:999px;
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:.8rem;
+    margin-bottom:16px; letter-spacing:1px;
+    border:1.5px solid var(--oc,#ff3d7f);
+    color:var(--oc,#ff3d7f); background:rgba(255,255,255,.06);
+  }
+  #rcEmoji{ display:block; font-size:3rem; margin-bottom:10px; animation:floatE 2s ease-in-out infinite; }
+  @keyframes floatE{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+  #rcPlayer{
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:1.1rem;
+    color:var(--oc,#ff3d7f); text-shadow:0 0 20px var(--oc,#ff3d7f); margin-bottom:4px;
+  }
+  #rcSub{ font-size:.72rem; color:rgba(255,255,255,.4); letter-spacing:2px; text-transform:uppercase; margin-bottom:22px; font-family:'Cairo',sans-serif; }
+  #rcOkBtn{
+    width:100%; border:none; border-radius:16px; padding:15px;
+    font-family:'Cairo',sans-serif; font-weight:900; font-size:1rem;
+    cursor:pointer; color:#120820;
+    background:linear-gradient(135deg,var(--oc,#ff3d7f),#ffcd3c);
+    box-shadow:0 8px 24px rgba(0,0,0,.4); transition:transform .15s;
+  }
+  #rcOkBtn:active{ transform:scale(.97); }
+  #ovlFlash{ position:absolute;inset:0;pointer-events:none;z-index:20;opacity:0;background:white;border-radius:0; }
+  #ovlCanvas{ position:absolute;inset:0;pointer-events:none;z-index:1;width:100%;height:100%; }
+  .cp{ position:fixed;top:-20px;pointer-events:none;z-index:200;border-radius:2px;animation:cpFall linear forwards; }
+  @keyframes cpFall{ to{transform:translateY(110vh) rotate(720deg);opacity:0;} }
+</style>
+</head>
+<body>
+<div class="app" id="app" dir="ltr">
+
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <div class="title" id="titleText">Action <span style="-webkit-text-fill-color:var(--text-dim)">ou</span> Vérité
+        <small id="subtitleText">SOIRÉE ENTRE AMIS</small>
+      </div>
+    </div>
+    <div class="lang-toggle">
+      <button id="btnFr" class="active">FR</button>
+      <button id="btnAr">AR</button>
+    </div>
+  </header>
+
+  <div class="steps" id="stepsIndicator">
+    <div class="step-dot active" data-step="1"></div>
+    <div class="step-dot" data-step="2"></div>
+  </div>
+
+  <!-- SCREEN 1: PLAYERS -->
+  <section class="screen active" id="screen-players">
+    <h2 class="screen-title" id="playersTitle">من سيلعب الليلة؟</h2>
+    <p class="screen-sub" id="playersSub">أضف أسماء اللاعبين، سيتم اختيار ترتيب الأدوار عشوائيًا</p>
+
+    <div class="player-add-row">
+      <input type="text" class="player-input" id="playerInput" placeholder="اسم اللاعب" maxlength="16">
+      <button class="player-add-btn" id="addPlayerBtn">+</button>
+    </div>
+
+    <div class="players-list-wrap">
+      <div class="players-list" id="playersList"></div>
+      <div class="players-empty" id="playersEmpty">
+        <span class="big">🎉</span>
+        <span id="playersEmptyText">لم تتم إضافة لاعبين بعد</span>
+      </div>
+    </div>
+
+    <button class="shuffle-btn" id="shuffleBtn" disabled>🎲 <span id="shuffleLabel">ترتيب عشوائي للأدوار</span></button>
+
+    <div class="bottom-action">
+      <div class="hint-line" id="playersHint">أضف لاعبَين على الأقل</div>
+      <button class="primary-btn" id="nextToModeBtn" disabled><span id="nextLabel">التالي</span> <span id="nextArrow">→</span></button>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: MODE -->
+  <section class="screen" id="screen-mode">
+    <button class="back-btn" id="backBtn"><span id="backArrow">←</span> <span id="backLabel">رجوع</span></button>
+    <h2 class="screen-title" id="modeTitle">اختر نمط اللعب</h2>
+    <p class="screen-sub" id="modeSub">يمكنك تغيير النمط في أي وقت أثناء اللعب</p>
+
+    <div class="mode-grid" id="modeGrid"></div>
+
+    <div class="bottom-action">
+      <button class="primary-btn" id="startGameBtn" disabled><span id="startLabel">ابدأ اللعب</span> 🎉</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: GAME -->
+  <section class="screen" id="screen-game">
+    <div class="game-top-row">
+      <button class="icon-btn" id="backToSetupBtn" title="">⚙️</button>
+      <div class="game-mode-pill" id="gameModePill">🎉 كلاسيك</div>
+      <button class="icon-btn" id="soundBtn" title="" onclick="toggleSound()" style="font-size:1.2rem">🔊</button>
+      <button class="icon-btn" id="resetBtn" title="">↺</button>
+    </div>
+
+    <div class="order-strip" id="orderStrip"></div>
+    <div class="turn-banner" id="turnBanner"></div>
+
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="face face-front">
+          <div class="big-emoji" id="frontEmoji">🎉</div>
+          <div class="hint" id="frontHint">اختر صحيح أو تحدي</div>
+          <div class="hint-sub" id="frontHintSub">اضغط على زر لكشف السؤال</div>
+        </div>
+        <div class="face face-back">
+          <div class="tag truth" id="cardTag">🤔 صحيح</div>
+          <div class="prompt-text" id="cardPrompt">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn-pick truth" id="btnTruth"><span class="emo">🤔</span><span id="labelTruth">صحيح</span></button>
+      <button class="btn-pick dare" id="btnDare"><span class="emo">🔥</span><span id="labelDare">تحدي</span></button>
+    </div>
+
+    <div class="secondary-row">
+      <div class="turn-counter">🎲 <span id="turnLabel">الدور</span> <b id="turnCount">0</b></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- EPIC OVERLAY -->
+<div id="epicOvl">
+  <div id="ovlBg"></div>
+  <canvas id="ovlCanvas"></canvas>
+  <div id="ovlFlash"></div>
+  <div id="spinRing"></div>
+  <div id="spinInner">🎲</div>
+  <div id="resCard">
+    <div id="rcBadge">🤔 VÉRITÉ</div>
+    <span id="rcEmoji">🎯</span>
+    <div id="rcPlayer"></div>
+    <div id="rcSub">carte révélée</div>
+    <button id="rcOkBtn" onclick="closeOverlay()">✓ OK !</button>
+  </div>
+</div>
+
+<script>
+/* =================== CONTENT =================== */
+const MODES = [
+  {id:'classique', emoji:'🎉', fr:'Classique', ar:'كلاسيك', tagFr:'Questions et défis fun pour démarrer', tagAr:'أسئلة وتحديات ممتعة للانطلاق'},
+  {id:'confessions', emoji:'🤫', fr:'Confessions', ar:'اعترافات', tagFr:'Secrets et aveux croustillants', tagAr:'أسرار واعترافات مثيرة'},
+  {id:'extreme', emoji:'🔥', fr:'Extrême', ar:'جنون', tagFr:'Défis osés et déjantés', tagAr:'تحديات جامحة وجريئة'},
+  {id:'profond', emoji:'💭', fr:'Profond', ar:'عميق', tagFr:'Questions sincères et touchantes', tagAr:'أسئلة صادقة ومؤثرة'},
+  {id:'couple', emoji:'💞', fr:'Couple', ar:'ثنائي', tagFr:'Spécial duo amoureux', tagAr:'خاص بالثنائي المحب'},
+  {id:'groupe', emoji:'👯', fr:'Groupe', ar:'جماعي', tagFr:'Tout le monde participe ensemble', tagAr:'يشارك فيها الجميع معًا'},
+];
+
+const DATA = {
+  classique:{
+    truths:{
+      fr:["Quel est le mensonge le plus drôle que tu aies raconté à tes parents ?","Quelle est la chose la plus gênante dans ton historique de recherche ?","As-tu déjà eu le béguin pour quelqu'un dans ce groupe ?","Quel est ton plus grand regret cette année ?","Quelle appli utilises-tu le plus en cachette ?","Quelle est la chose la plus bête que tu aies faite pour impressionner quelqu'un ?","As-tu déjà fouillé dans le téléphone de quelqu'un sans permission ?","Quel surnom embarrassant avais-tu enfant ?","Quelle est ta plus grande peur que personne ne connaît ?","As-tu déjà menti pour éviter une sortie avec un ami ?","Quel est le pire cadeau que tu aies reçu et fait semblant d'aimer ?","Si tu pouvais effacer un souvenir, lequel choisirais-tu ?"],
+      ar:["ما أطرف كذبة قلتها لوالديك؟","ما أكثر شيء محرج في سجل بحثك؟","هل سبق أن أحببت أحدًا من هذه المجموعة؟","ما أكبر ندم لديك هذا العام؟","ما التطبيق الذي تستخدمه كثيرًا بالخفية؟","ما أغبى شيء فعلته لإعجاب أحد؟","هل تصفحت هاتف أحد بدون إذنه من قبل؟","ما اللقب المحرج الذي كان لديك في طفولتك؟","ما أكبر خوف لا يعرفه أحد عنك؟","هل كذبت لتتجنب خروجًا مع صديق؟","ما أسوأ هدية تلقيتها وتظاهرت بأنك أحببتها؟","لو استطعت محو ذكرى واحدة، ماذا تختار؟"]
+    },
+    dares:{
+      fr:["Imite la voix d'un de tes amis pendant 30 secondes.","Fais 10 pompes ou chante une chanson au choix du groupe.","Laisse quelqu'un publier un statut sur ton compte.","Danse sans musique pendant 1 minute.","Raconte une blague, si personne ne rit tu bois ton verre d'eau d'un trait.","Échange un vêtement avec la personne à ta droite pour le reste de la soirée.","Parle avec un accent choisi par le groupe pendant 3 tours.","Envoie un emoji aléatoire à ton 5e contact.","Fais un compliment sincère à chaque personne présente.","Imite un animal jusqu'à ce que quelqu'un devine lequel.","Laisse le groupe te coiffer n'importe comment pendant 5 minutes.","Récite l'alphabet à l'envers en moins de 20 secondes."],
+      ar:["قلّد صوت أحد أصدقائك لمدة 30 ثانية.","قم بـ10 تمارين ضغط أو غنّ أغنية تختارها المجموعة.","اسمح لأحدهم بنشر منشور على حسابك.","ارقص بدون موسيقى لمدة دقيقة.","احكِ نكتة، وإذا لم يضحك أحد اشرب كوب ماء كاملاً.","بادل قطعة ملابس مع الشخص على يمينك لبقية السهرة.","تحدث بلكنة تختارها المجموعة لثلاثة أدوار قادمة.","أرسل إيموجي عشوائي لجهة الاتصال الخامسة في هاتفك.","قل مجاملة صادقة لكل شخص حاضر.","قلّد حيوانًا حتى يخمّن أحدهم ما هو.","اسمح للمجموعة بتصفيف شعرك بأي شكل لمدة 5 دقائق.","عدّ الحروف الأبجدية بالعكس في أقل من 20 ثانية."]
+    }
+  },
+  confessions:{
+    truths:{
+      fr:["Quelle est la chose la plus folle que tu aies faite pour l'amour ?","As-tu déjà aimé deux personnes en même temps ?","Quel est ton plus grand complexe physique ?","As-tu déjà pleuré pour un film ou une série ? Lequel ?","Quelle est la chose la plus gênante que tes parents t'aient surpris à faire ?","As-tu déjà triché à un examen ?","Quel est ton plus grand secret que personne ici ne connaît ?","As-tu déjà parlé en mal de quelqu'un présent dans cette pièce ?","Quelle est la pire chose que tu aies dite sous le coup de la colère ?","As-tu déjà fait semblant d'être malade pour éviter quelque chose ?","Quel est ton plus grand échec scolaire ou professionnel ?","As-tu déjà regretté un message envoyé ?"],
+      ar:["ما أجنّ شيء فعلته من أجل الحب؟","هل أحببت شخصين في نفس الوقت من قبل؟","ما أكبر عقدة جسدية لديك؟","هل بكيت بسبب فيلم أو مسلسل؟ أيّهما؟","ما أكثر شيء محرج ضبطك والداك تفعله؟","هل غششت في امتحان من قبل؟","ما أكبر سر لا يعرفه أحد هنا؟","هل تكلمت بالسوء عن أحد الحاضرين في هذه الغرفة؟","ما أسوأ شيء قلته في لحظة غضب؟","هل تظاهرت بالمرض لتتجنب شيئًا؟","ما أكبر فشل دراسي أو مهني واجهته؟","هل ندمت على رسالة أرسلتها؟"]
+    },
+    dares:{
+      fr:["Laisse le groupe lire ton dernier message envoyé à voix haute.","Appelle quelqu'un et chante-lui « Joyeux anniversaire » même si ce n'est pas le sien.","Montre la première photo de ta galerie.","Laisse un ami écrire un statut sur ton réseau social.","Avoue ton dernier petit mensonge à voix haute.","Fais une déclaration d'amour dramatique à un objet de la pièce.","Imite la personne à ta gauche pendant 1 minute.","Lis ton horoscope du jour à voix haute, de manière théâtrale.","Montre la dernière recherche que tu as faite sur internet.","Raconte ton souvenir le plus embarrassant en classe.","Laisse le groupe choisir ta photo de profil pour demain.","Envoie un message « je pense à toi » à un contact choisi par le groupe."],
+      ar:["اسمح للمجموعة بقراءة آخر رسالة أرسلتها بصوت عالٍ.","اتصل بأحد وغنّ له «عيد ميلاد سعيد» حتى لو لم يكن عيد ميلاده.","أظهر أول صورة في معرض صورك.","اسمح لصديق بكتابة منشور على حسابك.","اعترف بآخر كذبة صغيرة قلتها بصوت عالٍ.","قدّم إعلان حب دراماتيكي لشيء في الغرفة.","قلّد الشخص الذي على يسارك لمدة دقيقة.","اقرأ برجك اليوم بصوت عالٍ وبطريقة مسرحية.","أظهر آخر بحث قمت به على الإنترنت.","احكِ أكثر ذكرى محرجة لك في الفصل الدراسي.","اسمح للمجموعة باختيار صورة ملفك الشخصي ليوم غد.","أرسل رسالة «أفتكرك» لشخص تختاره المجموعة."]
+    }
+  },
+  extreme:{
+    truths:{
+      fr:["Quelle est la règle que tu as le plus enfreinte chez toi ?","As-tu déjà eu des ennuis avec la police ou un agent de sécurité ?","Quelle est la chose la plus risquée que tu aies faite sans réfléchir ?","As-tu déjà sauté en cachette par une fenêtre ou un balcon ?","Quel est ton pire souvenir de soirée ?","As-tu déjà conduit sans permis ?","Quelle est la chose la plus folle que tu ferais pour 1000 euros ?","As-tu déjà fait une blague qui a vraiment mal fini ?","Quel est le plus gros mensonge que tu aies dit à un professeur ?","As-tu déjà été viré, ou menacé de l'être ?"],
+      ar:["ما القاعدة التي خالفتها أكثر في بيتك؟","هل واجهت مشكلة مع الشرطة أو حارس أمن من قبل؟","ما أخطر شيء فعلته بدون تفكير؟","هل نزلت من نافذة أو شرفة خفية من قبل؟","ما أسوأ ذكرى لك في سهرة؟","هل قدت سيارة بدون رخصة من قبل؟","ما أجنّ شيء يمكن أن تفعله من أجل 1000 يورو؟","هل قمت بمقلب انتهى بشكل سيء فعلاً؟","ما أكبر كذبة قلتها لمعلم؟","هل تم طردك أو هددوك بالطرد من عمل أو مدرسة؟"]
+    },
+    dares:{
+      fr:["Mets une pointe de sauce piquante sur ta langue pendant 10 secondes.","Fais le poirier ou la roue (selon tes capacités) devant tout le monde.","Laisse le groupe te dessiner une moustache au feutre.","Mange un mélange bizarre choisi par le groupe (sans danger pour la santé).","Crie « JE SUIS UNE ROCKSTAR » par la fenêtre.","Fais 20 squats en chantant l'hymne national.","Laisse quelqu'un te chatouiller pendant 30 secondes sans rire.","Échange tes chaussures avec quelqu'un pour le reste de la soirée.","Fais une danse robotique devant tout le monde.","Laisse le groupe filmer une story complètement absurde de toi."],
+      ar:["ضع نقطة صلصة حارة على لسانك لمدة 10 ثواني.","قف على يديك أو قم بحركة بهلوانية بحسب قدرتك أمام الجميع.","اسمح للمجموعة برسم شارب على وجهك بقلم.","كل مزيجًا غريبًا تختاره المجموعة (بشرط أن يكون آمنًا صحيًا).","اصرخ «أنا نجم روك» من النافذة.","قم بـ20 قرفصاء وأنت تغني النشيد الوطني.","اسمح لأحدهم بدغدغتك لمدة 30 ثانية بدون أن تضحك.","بادل حذاءك مع أحدهم لبقية السهرة.","قم برقصة الروبوت أمام الجميع.","اسمح للمجموعة بتصوير ستوري سخيفة جدًا لك."]
+    }
+  },
+  profond:{
+    truths:{
+      fr:["Quelle est la chose dont tu es le plus fier dans ta vie ?","Qu'est-ce que tu changerais dans ta vie si tu pouvais recommencer ?","Quelle personne a le plus influencé qui tu es aujourd'hui ?","Quelle est ta plus grande peur pour ton avenir ?","Quel conseil donnerais-tu à toi-même il y a 5 ans ?","Qu'est-ce que tu n'as jamais dit à quelqu'un que tu aimes ?","Quel est le moment le plus difficile que tu aies traversé ?","Qu'est-ce qui te fait te sentir vraiment seul ?","Quelle qualité admires-tu le plus chez les autres ?","Si tu savais que tu allais mourir dans un an, que changerais-tu ?"],
+      ar:["ما الشيء الذي تفتخر به أكثر في حياتك؟","ما الذي ستغيّره في حياتك لو استطعت البدء من جديد؟","من الشخص الذي أثّر فيك أكثر لتكون كما أنت اليوم؟","ما أكبر خوف لديك بخصوص مستقبلك؟","ما النصيحة التي تقدمها لنفسك منذ 5 سنوات؟","ما الشيء الذي لم تقله أبدًا لشخص تحبه؟","ما أصعب لحظة مررت بها في حياتك؟","ما الذي يجعلك تشعر بالوحدة حقًا؟","ما الصفة التي تعجبك أكثر في الآخرين؟","لو علمت أنك ستموت بعد سنة، ماذا ستغيّر؟"]
+    },
+    dares:{
+      fr:["Dis à la personne à ta droite ce que tu admires chez elle.","Partage un souvenir d'enfance qui t'a marqué.","Remercie sincèrement quelqu'un du groupe pour quelque chose de précis.","Décris la personne que tu aimerais devenir dans 10 ans.","Fais un câlin sincère à la personne assise en face de toi.","Partage la leçon de vie la plus importante que tu aies apprise.","Dis une chose que tu n'as jamais eu le courage de dire à voix haute.","Raconte le moment où tu t'es senti le plus fier de toi.","Décris ce que représente l'amitié pour toi en une phrase.","Écris un mot d'encouragement et donne-le à quelqu'un du groupe."],
+      ar:["قل للشخص الذي على يمينك ما الذي تُعجب به فيه.","شارك ذكرى من طفولتك تركت أثرًا فيك.","اشكر بصدق شخصًا في المجموعة على أمر محدد فعله.","صف الشخص الذي تريد أن تكونه بعد 10 سنوات.","عانق بصدق الشخص الجالس أمامك.","شارك أهم درس تعلمته في حياتك.","قل شيئًا لم تجرؤ على قوله بصوت عالٍ من قبل.","احكِ اللحظة التي شعرت فيها بأكبر فخر بنفسك.","عبّر عن معنى الصداقة بالنسبة لك بجملة واحدة.","اكتب كلمة تشجيع وأعطها لأحد في المجموعة."]
+    }
+  },
+  couple:{
+    truths:{
+      fr:["Quel a été ton premier sentiment en le/la rencontrant ?","Quelle est la qualité que tu préfères chez ton/ta partenaire ?","Quel est ton souvenir préféré ensemble ?","Qu'est-ce qui te fait sentir aimé(e) ?","Quel petit geste du quotidien te touche le plus ?","Quelle est ta définition du couple idéal ?","Quel surnom secret donnerais-tu à ton/ta partenaire ?","Quel est le moment où tu as su que c'était sérieux ?","Qu'est-ce que tu aimerais qu'on fasse ensemble qu'on n'a jamais fait ?","Quelle chanson te fait penser à votre histoire ?"],
+      ar:["ما أول شعور انتابك عند مقابلته/ـها؟","ما الصفة التي تفضلها في شريك حياتك؟","ما أجمل ذكرى جمعتكما معًا؟","ما الذي يجعلك تشعر بأنك محبوب؟","ما أصغر تصرف يومي يلمس قلبك أكثر؟","ما تعريفك للعلاقة المثالية؟","ما اللقب السري الذي تختاره لشريكك؟","ما اللحظة التي أدركت فيها أن العلاقة أصبحت جدية؟","ما الذي تتمنى أن تفعلاه معًا ولم تفعلاه من قبل؟","ما الأغنية التي تذكرك بقصتكما؟"]
+    },
+    dares:{
+      fr:["Fais un compliment sincère à ton/ta partenaire devant tout le monde.","Dansez un slow improvisé pendant 30 secondes.","Raconte votre rencontre comme si c'était un film romantique.","Offre un massage des épaules d'une minute à ton/ta partenaire.","Écris un petit mot doux et lis-le à voix haute.","Regarde ton/ta partenaire dans les yeux sans rire pendant 30 secondes.","Imite la première fois où vous vous êtes parlé.","Fais une promesse simple et sincère à voix haute.","Choisis un surnom affectueux et utilise-le pour le reste de la soirée.","Prenez une photo souvenir avec une pose choisie par le groupe."],
+      ar:["قل مجاملة صادقة لشريكك أمام الجميع.","ارقصا رقصة هادئة عفوية لمدة 30 ثانية.","احكِ قصة لقائكما كما لو كانت فيلمًا رومانسيًا.","قدّم تدليكًا خفيفًا للأكتاف لمدة دقيقة لشريكك.","اكتب كلمة رقيقة واقرأها بصوت عالٍ.","انظر في عيني شريكك بدون ضحك لمدة 30 ثانية.","مثّلا أول مرة تحدثتما فيها مع بعض.","قدّم وعدًا بسيطًا وصادقًا بصوت عالٍ.","اختر لقبًا حنونًا واستخدمه لبقية السهرة.","التقطا صورة تذكارية بوضعية تختارها المجموعة."]
+    }
+  },
+  groupe:{
+    truths:{
+      fr:["Qui dans ce groupe garderait le mieux un secret ?","Si tu devais voyager avec une seule personne ici, qui choisirais-tu ?","Qui dans le groupe te fait le plus rire ?","Quelle personne ici a le plus changé depuis que tu la connais ?","Si le groupe devait survivre sur une île, qui serait le chef ?","Qui dans cette pièce serait le plus susceptible de devenir célèbre ?","Quelle personne ici te comprend le mieux sans parler ?","Qui serait le pire colocataire parmi nous ?","Si on formait une équipe de super-héros, quel rôle aurait chacun ?","Qui dans le groupe garde le plus de secrets ?"],
+      ar:["من في هذه المجموعة سيحفظ السر بشكل أفضل؟","لو كان عليك السفر مع شخص واحد فقط هنا، من تختار؟","من في المجموعة يضحكك أكثر؟","من الشخص هنا الذي تغيّر أكثر منذ أن تعرفه؟","لو نجت المجموعة على جزيرة، من سيكون القائد؟","من في هذه الغرفة الأقرب لأن يصبح مشهورًا؟","من الشخص هنا الذي يفهمك بدون كلام؟","من سيكون أسوأ زميل سكن بيننا؟","لو شكّلنا فريق أبطال خارقين، ما الدور المناسب لكل واحد؟","من في المجموعة يحتفظ بأكبر عدد من الأسرار؟"]
+    },
+    dares:{
+      fr:["Tout le monde doit dire un compliment sur la personne à sa gauche, en même temps.","Faites une photo de groupe avec la grimace la plus drôle possible.","Le groupe entier doit chanter en chœur le refrain d'une chanson choisie.","Formez un cercle, chacun doit dire un mot pour décrire la personne en face.","Tout le monde échange de place, et doit deviner pourquoi.","Le groupe doit inventer une poignée de main secrète en 1 minute.","Faites une mini chorégraphie de groupe improvisée.","Chacun doit deviner le plat préféré de la personne à sa droite.","Le groupe doit créer un surnom collectif pour la soirée.","Tout le monde ferme les yeux et doit reconnaître une personne au toucher de la main."],
+      ar:["على الجميع أن يقولوا مجاملة للشخص الذي على يسارهم في نفس الوقت.","التقطوا صورة جماعية بأغرب تعبير وجه ممكن.","على المجموعة كلها أن تغني جزءًا من أغنية مختارة معًا.","كوّنوا دائرة وعلى كل شخص أن يقول كلمة تصف الشخص الذي أمامه.","يتبادل الجميع الأماكن وعلى كل واحد أن يخمّن السبب.","على المجموعة ابتكار تحية سرية باليد في دقيقة واحدة.","قوموا برقصة جماعية عفوية قصيرة.","على كل شخص تخمين الأكلة المفضلة للشخص الذي على يمينه.","على المجموعة اختيار لقب جماعي لهذه السهرة.","يغمض الجميع أعينهم وعليهم التعرف على شخص من خلال لمسة يده."]
+    }
+  }
+};
+
+/* =================== UI TEXT =================== */
+const UI = {
+  fr:{
+    subtitle:'SOIRÉE ENTRE AMIS',
+    playersTitle:'Qui va jouer ce soir ?',
+    playersSub:"Ajoute les joueurs, l'ordre des tours sera tiré au hasard",
+    playerPlaceholder:'Prénom du joueur',
+    playersEmptyText:"Aucun joueur ajouté pour l'instant",
+    shuffleLabel:'Mélanger les tours',
+    hintNeedMore:'Ajoute au moins 2 joueurs',
+    hintReady:'Tout est prêt !',
+    next:'Suivant', arrow:'→', backArrow:'←', back:'Retour',
+    modeTitle:'Choisis ton mode',
+    modeSub:'Tu pourras aussi changer de mode pendant la partie',
+    start:'Commencer la partie', confirm:'Confirmer',
+    turn:'Tour', truth:'Vérité', dare:'Action', truthTag:'🤔 VÉRITÉ', dareTag:'🔥 ACTION',
+    frontHint:'Choisis Vérité ou Action', frontHintSub:'Appuie sur un bouton pour révéler',
+    turnOf:'Au tour de'
+  },
+  ar:{
+    subtitle:'سهرة مع الأصدقاء',
+    playersTitle:'من سيلعب الليلة؟',
+    playersSub:'أضف أسماء اللاعبين، سيتم اختيار ترتيب الأدوار عشوائيًا',
+    playerPlaceholder:'اسم اللاعب',
+    playersEmptyText:'لم تتم إضافة لاعبين بعد',
+    shuffleLabel:'ترتيب عشوائي للأدوار',
+    hintNeedMore:'أضف لاعبَين على الأقل',
+    hintReady:'كل شيء جاهز !',
+    next:'التالي', arrow:'←', backArrow:'→', back:'رجوع',
+    modeTitle:'اختر نمط اللعب',
+    modeSub:'يمكنك تغيير النمط في أي وقت أثناء اللعب',
+    start:'ابدأ اللعب', confirm:'تأكيد',
+    turn:'الدور', truth:'صحيح', dare:'تحدي', truthTag:'🤔 صحيح', dareTag:'🔥 تحدي',
+    frontHint:'اختر صحيح أو تحدي', frontHintSub:'اضغط على زر لكشف السؤال',
+    turnOf:'دور'
+  }
+};
+
+/* =================== STATE =================== */
+let lang = 'fr';
+let mode = null;
+let turn = 0;
+let pools = {};
+let players = [];
+let currentPlayerIndex = 0;
+let modeOrigin = 'setup'; // 'setup' or 'game'
+
+function shuffledIndices(n){
+  const arr = Array.from({length:n}, (_,i)=>i);
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+}
+
+function getNext(type){
+  const key = mode+'|'+type+'|'+lang;
+  const list = DATA[mode][type][lang];
+  if(!pools[key] || pools[key].length===0){
+    pools[key] = shuffledIndices(list.length);
+  }
+  const idx = pools[key].pop();
+  return list[idx];
+}
+
+/* =================== SCREEN NAV =================== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  const steps = document.getElementById('stepsIndicator');
+  if(id === 'game'){ 
+    steps.style.display = 'none';
+    // ✅ Always re-render these when entering game screen
+    renderOrderStrip();
+    renderTurnBanner();
+  } else {
+    steps.style.display = 'flex';
+    document.querySelectorAll('.step-dot').forEach(d=>d.classList.remove('active'));
+    const stepNum = id === 'players' ? 1 : 2;
+    document.querySelector('.step-dot[data-step="'+stepNum+'"]').classList.add('active');
+    if(stepNum === 2) document.querySelector('.step-dot[data-step="1"]').classList.add('done');
+  }
+}
+
+/* =================== PLAYERS SCREEN =================== */
+function renderPlayers(){
+  const list = document.getElementById('playersList');
+  const empty = document.getElementById('playersEmpty');
+  list.innerHTML = '';
+  empty.style.display = players.length ? 'none' : 'block';
+  players.forEach((p, i)=>{
+    const chip = document.createElement('div');
+    chip.className = 'player-chip';
+    chip.innerHTML = `<span class="chip-num">${i+1}</span><span>${p}</span><span class="rm">✕</span>`;
+    chip.querySelector('.rm').onclick = (e)=>{
+      e.stopPropagation();
+      players.splice(i,1);
+      renderPlayers();
+      updatePlayersGate();
+    };
+    list.appendChild(chip);
+  });
+  updatePlayersGate();
+}
+
+function updatePlayersGate(){
+  const t = UI[lang];
+  const ready = players.length >= 2;
+  document.getElementById('shuffleBtn').disabled = !ready;
+  document.getElementById('nextToModeBtn').disabled = !ready;
+  document.getElementById('playersHint').textContent = ready ? t.hintReady : t.hintNeedMore;
+}
+
+function addPlayer(){
+  const input = document.getElementById('playerInput');
+  const name = input.value.trim();
+  if(!name) return;
+  players.push(name);
+  input.value = '';
+  renderPlayers();
+  input.focus();
+}
+
+document.getElementById('addPlayerBtn').onclick = addPlayer;
+document.getElementById('playerInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){ e.preventDefault(); addPlayer(); }
+});
+document.getElementById('shuffleBtn').onclick = ()=>{
+  shuffleArray(players);
+  renderPlayers();
+};
+document.getElementById('nextToModeBtn').onclick = ()=>{
+  if(players.length < 2) return;
+  shuffleArray(players);
+  currentPlayerIndex = 0;
+  modeOrigin = 'setup';
+  renderModeGrid();
+  updateModeStartButton();
+  document.getElementById('backBtn').style.display = 'inline-flex';
+  showScreen('mode');
+};
+
+/* =================== MODE SCREEN =================== */
+function renderModeGrid(){
+  const grid = document.getElementById('modeGrid');
+  grid.innerHTML = '';
+  MODES.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'mode-card' + (m.id === mode ? ' selected' : '');
+    card.innerHTML = `<div class="ic">${m.emoji}</div><div class="nm">${m[lang]}</div><div class="tg">${lang==='ar'?m.tagAr:m.tagFr}</div>`;
+    card.onclick = ()=>{
+      mode = m.id;
+      renderModeGrid();
+      updateModeStartButton();
+    };
+    grid.appendChild(card);
+  });
+}
+
+function updateModeStartButton(){
+  const btn = document.getElementById('startGameBtn');
+  btn.disabled = !mode;
+}
+
+document.getElementById('backBtn').onclick = ()=>{
+  if(modeOrigin === 'game'){ showScreen('game'); }
+  else{ showScreen('players'); }
+};
+
+document.getElementById('startGameBtn').onclick = ()=>{
+  if(!mode) return;
+  if(modeOrigin === 'game'){
+    updateGameModePill();
+    showScreen('game');
+  } else {
+    turn = 0;
+    pools = {};
+    // ✅ اختيار عشوائي لأول لاعب
+    currentPlayerIndex = Math.floor(Math.random() * players.length);
+    document.getElementById('card').classList.remove('flipped');
+    document.getElementById('turnCount').textContent = 0;
+    updateGameModePill();
+    renderOrderStrip();
+    renderTurnBanner();
+    showScreen('game');
+  }
+};
+
+/* =================== GAME SCREEN =================== */
+function updateGameModePill(){
+  const m = MODES.find(x=>x.id===mode);
+  document.getElementById('gameModePill').textContent = m.emoji + ' ' + m[lang];
+}
+
+document.getElementById('gameModePill').onclick = ()=>{
+  modeOrigin = 'game';
+  document.getElementById('startLabel').textContent = UI[lang].confirm;
+  renderModeGrid();
+  updateModeStartButton();
+  document.getElementById('backBtn').style.display = 'inline-flex';
+  showScreen('mode');
+};
+
+function renderOrderStrip(){
+  const strip = document.getElementById('orderStrip');
+  if(!strip) return;
+  strip.innerHTML = '';
+  if(players.length === 0) return;
+  players.forEach((p,i)=>{
+    const av = document.createElement('div');
+    av.className = 'order-av' + (i===currentPlayerIndex ? ' current' : '');
+    av.textContent = p.trim().charAt(0).toUpperCase();
+    strip.appendChild(av);
+  });
+}
+
+function renderTurnBanner(){
+  const banner = document.getElementById('turnBanner');
+  if(!banner) return;
+  if(players.length === 0){ banner.innerHTML = ''; return; }
+  const name = players[currentPlayerIndex] || '';
+  const t = UI[lang];
+  banner.innerHTML = `<div class="name">🎯 ${t.turnOf} <span style="color:#fff">${name}</span></div>`;
+}
+
+function advancePlayer(){
+  if(players.length === 0) return;
+  currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+  renderOrderStrip();
+  renderTurnBanner();
+}
+
+function reveal(type){
+  const text = getNext(type);
+  const t = UI[lang];
+  document.getElementById('cardTag').className='tag '+(type==='truths'?'truth':'dare');
+  document.getElementById('cardTag').textContent=type==='truths'?t.truthTag:t.dareTag;
+  document.getElementById('cardPrompt').textContent=text;
+  // ✅ capture name BEFORE advancing
+  const playerName = players[currentPlayerIndex] || '';
+  turn++;
+  document.getElementById('turnCount').textContent=turn;
+  openOverlay(type, text, playerName);
+  // advance AFTER overlay opens so banner updates correctly when closing
+}
+
+/* ========== SOUND SYSTEM ========== */
+const BASE = 'https://www.myinstants.com/media/sounds/';
+
+// مكتبة الأصوات من myinstants - متنوعة لكل لحظة
+const SFX = {
+  // أصوات الدوران - 3 مختلفة تتبادل
+  spin: [
+    BASE + 'spin-the-wheel.mp3',
+    BASE + 'wheel-of-fortune-wheel-sound.mp3',
+    BASE + 'drum-roll-gaming-sound-effect-hd.mp3',
+  ],
+  // انفجار الكشف
+  boom: [
+    BASE + 'zapsplat_sound_design_cinematic_whoosh_into_impact_missle_like_explosion_001_29904.mp3',
+    BASE + 'explosion-mp3.mp3',
+  ],
+  // الاحتفال عند ظهور البطاقة
+  reveal: [
+    BASE + 'ta-da_yrvBrlS.mp3',
+    BASE + 'confetti-pop-sound.mp3',
+  ],
+  // عند الضغط OK
+  ok: [
+    BASE + 'confetti-pop-sound.mp3',
+  ]
+};
+
+let _sfxEnabled = true;
+let _lastSpin = -1, _lastReveal = -1;
+
+function _playSound(urlList, volume = 0.8, pick = 'random') {
+  if (!_sfxEnabled) return;
+  let url;
+  if (pick === 'random') {
+    url = urlList[Math.floor(Math.random() * urlList.length)];
+  } else {
+    url = urlList[pick % urlList.length];
+  }
+  try {
+    const a = new Audio(url);
+    a.volume = volume;
+    a.crossOrigin = 'anonymous';
+    a.play().catch(() => {}); // silent fail if blocked
+  } catch(e) {}
+}
+
+// أصوات دوران متبادلة (لا تتكرر نفس الصوت مرتين)
+let _spinIdx = 0;
+function _playSpin() {
+  _playSound(SFX.spin, 0.7, _spinIdx % SFX.spin.length);
+  _spinIdx++;
+}
+let _revealIdx = 0;
+function _playReveal() {
+  _playSound(SFX.reveal, 0.9, _revealIdx % SFX.reveal.length);
+  _revealIdx++;
+}
+function _playBoom() {
+  _playSound(SFX.boom, 0.6);
+}
+function _playOk() {
+  _playSound(SFX.ok, 0.7);
+}
+const THEMES=[
+  {bg:'radial-gradient(ellipse at 50% 60%,#3d0a00,#100000)',ring:'#ff4400',ic:'🔥',oc:'#ff4400',ptcl:'fire'},
+  {bg:'radial-gradient(ellipse at 30% 40%,#001833,#000810)',ring:'#00aaff',ic:'⚡',oc:'#00c8ff',ptcl:'bolt'},
+  {bg:'radial-gradient(ellipse at 70% 30%,#1a0033,#06000f)',ring:'#c770ff',ic:'✨',oc:'#c770ff',ptcl:'star'},
+  {bg:'radial-gradient(ellipse at 50% 50%,#001a1a,#000808)',ring:'#00fff0',ic:'💎',oc:'#00fff0',ptcl:'neon'},
+  {bg:'radial-gradient(ellipse at 50% 20%,#2a1500,#0a0400)',ring:'#ffcd3c',ic:'👑',oc:'#ffcd3c',ptcl:'gold'},
+  {bg:'radial-gradient(ellipse at 50% 50%,#0f0020,#030008)',ring:'#9933ff',ic:'🌀',oc:'#a020ff',ptcl:'vortex'},
+];
+
+let _ovlActive=false,_rafId=null,_pts=[],_fr=0,_ptMode='star',_cvs=null,_ctx=null;
+
+function _pt(w,h,mode){
+  const a=Math.random()*Math.PI*2,s=1+Math.random()*5;
+  if(mode==='fire') return {x:w/2+(Math.random()-.5)*100,y:h*.7,vx:(Math.random()-.5)*2,vy:-(2+Math.random()*5),life:1,dec:.018+Math.random()*.02,r:3+Math.random()*7,c:`hsl(${15+Math.random()*30},100%,${50+Math.random()*30}%)`};
+  if(mode==='bolt') return {x:Math.random()*w,y:0,vx:(Math.random()-.5)*1.5,vy:4+Math.random()*7,life:1,dec:.04+Math.random()*.06,r:1+Math.random()*2,c:`hsl(${195+Math.random()*30},100%,80%)`};
+  if(mode==='neon') return {x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*1.2,vy:(Math.random()-.5)*1.2,life:1,dec:.007+Math.random()*.012,r:1+Math.random()*3,c:`hsl(${160+Math.random()*40},100%,70%)`};
+  if(mode==='gold') return {x:w/2+(Math.random()-.5)*80,y:h/2+(Math.random()-.5)*80,vx:Math.cos(a)*s*.8,vy:Math.sin(a)*s*.8-1,life:1,dec:.012+Math.random()*.018,r:2+Math.random()*5,c:`hsl(${38+Math.random()*18},100%,${60+Math.random()*30}%)`};
+  if(mode==='vortex'){const r2=60+Math.random()*90;return {x:w/2+Math.cos(a)*r2,y:h/2+Math.sin(a)*r2,vx:-Math.sin(a)*2.5,vy:Math.cos(a)*2.5,life:1,dec:.018+Math.random()*.025,r:1+Math.random()*4,c:`hsl(${260+Math.random()*70},100%,70%)`};}
+  // star default
+  return {x:w/2,y:h/2,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,dec:.012+Math.random()*.018,r:1+Math.random()*4,c:`hsl(${Math.random()*360},100%,80%)`};
+}
+
+function _loop(){
+  if(!_ovlActive)return;
+  _fr++;
+  _cvs.width=_cvs.offsetWidth;_cvs.height=_cvs.offsetHeight;
+  _ctx.clearRect(0,0,_cvs.width,_cvs.height);
+  const w=_cvs.width,h=_cvs.height;
+  for(let i=0;i<4;i++) _pts.push(_pt(w,h,_ptMode));
+  _pts=_pts.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;if(_ptMode==='fire')p.r*=.97;p.life-=p.dec;
+    if(p.life<=0)return false;
+    _ctx.save();_ctx.globalAlpha=p.life*.85;_ctx.fillStyle=p.c;
+    _ctx.shadowColor=p.c;_ctx.shadowBlur=p.r*3;
+    _ctx.beginPath();_ctx.arc(p.x,p.y,Math.max(.5,p.r),0,Math.PI*2);_ctx.fill();
+    _ctx.restore();return true;
+  });
+  _rafId=requestAnimationFrame(_loop);
+}
+
+function _startPtcl(mode){
+  _ptMode=mode;_pts=[];_fr=0;_ovlActive=true;_loop();
+}
+function _stopPtcl(){
+  _ovlActive=false;if(_rafId)cancelAnimationFrame(_rafId);_pts=[];
+  if(_ctx)_ctx.clearRect(0,0,_cvs.width,_cvs.height);
+}
+
+let _wheelAngle=0,_wRafId=null;
+function _spin(ring,dur,cb){
+  const t0=performance.now(),maxSpd=22+Math.random()*15;
+  function f(now){
+    const el=now-t0,prog=Math.min(el/dur,1);
+    const spd=prog<.55?maxSpd:maxSpd*(1-Math.pow((prog-.55)/.45,2));
+    _wheelAngle+=spd;
+    ring.style.transform=`scale(1) rotate(${_wheelAngle}deg)`;
+    if(prog<1){_wRafId=requestAnimationFrame(f);}
+    else{ring.style.transform=`scale(1) rotate(${_wheelAngle}deg)`;cb&&cb();}
+  }
+  _wRafId=requestAnimationFrame(f);
+}
+
+function _flash(el,col){
+  el.style.background=col;el.style.opacity='1';
+  setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>{el.style.transition='';},450);},80);
+}
+
+function _boom(ovl,col){
+  for(let i=0;i<3;i++){
+    const r=document.createElement('div');
+    const sz=80+i*60;
+    r.style.cssText=`position:absolute;pointer-events:none;z-index:5;width:${sz}px;height:${sz}px;border-radius:50%;border:3px solid ${col};left:calc(50% - ${sz/2}px);top:calc(50% - ${sz/2}px);animation:boomRing .6s ${i*.15}s ease-out forwards;box-shadow:0 0 12px ${col};`;
+    ovl.appendChild(r);setTimeout(()=>r.remove(),900);
+  }
+  if(!document.getElementById('boomKF')){
+    const s=document.createElement('style');s.id='boomKF';
+    s.textContent='@keyframes boomRing{from{transform:scale(0);opacity:.9;}to{transform:scale(3.5);opacity:0;}}';
+    document.head.appendChild(s);
+  }
+}
+
+function _celebrate(ovl,col){
+  // confetti burst
+  const colors=['#ff3d7f','#ffcd3c','#1fe6e0','#c770ff','#ff8c00','#39ff14'];
+  for(let i=0;i<35;i++){
+    const c=document.createElement('div');
+    c.className='cp';
+    c.style.width=(5+Math.random()*8)+'px';
+    c.style.height=(8+Math.random()*12)+'px';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.left=(5+Math.random()*90)+'%';
+    c.style.animationDuration=(1+Math.random()*1.2)+'s';
+    c.style.animationDelay=(Math.random()*.4)+'s';
+    c.style.transform=`rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2500);
+  }
+  // star emojis
+  for(let i=0;i<10;i++){
+    const s=document.createElement('div');
+    const angle=(i/10)*Math.PI*2,dist=90+Math.random()*80;
+    s.style.cssText=`position:absolute;pointer-events:none;z-index:50;font-size:${1+Math.random()}rem;left:calc(50% + ${Math.cos(angle)*dist}px);top:calc(50% + ${Math.sin(angle)*dist}px);animation:starPop .7s ${Math.random()*.3}s ease-out forwards;`;
+    s.textContent=['⭐','✨','💫','🌟','🎊'][Math.floor(Math.random()*5)];
+    ovl.appendChild(s);setTimeout(()=>s.remove(),1200);
+  }
+  if(!document.getElementById('starKF')){
+    const s=document.createElement('style');s.id='starKF';
+    s.textContent='@keyframes starPop{from{transform:scale(0);opacity:1;}to{transform:scale(1.8) rotate(360deg);opacity:0;}}';
+    document.head.appendChild(s);
+  }
+}
+
+function openOverlay(type,text,playerName){
+  const ovl=document.getElementById('epicOvl');
+  const bg=document.getElementById('ovlBg');
+  const ring=document.getElementById('spinRing');
+  const inner=document.getElementById('spinInner');
+  const card=document.getElementById('resCard');
+  const flash=document.getElementById('ovlFlash');
+  _cvs=document.getElementById('ovlCanvas');
+  _ctx=_cvs.getContext('2d');
+
+  const theme=THEMES[Math.floor(Math.random()*THEMES.length)];
+  const isTruth=(type==='truths');
+  const oc=isTruth?'#1fe6e0':'#ff3d7f';
+  const t=UI[lang];
+
+  // set CSS var for color
+  ovl.style.setProperty('--oc',oc);
+  card.style.setProperty('--oc',oc);
+
+  // configure
+  bg.style.background=theme.bg;
+  ring.style.borderTopColor=theme.ring;
+  ring.style.borderRightColor=oc;
+  ring.style.borderBottomColor=theme.ring;
+  ring.style.borderLeftColor=oc;
+  ring.style.boxShadow=`0 0 40px ${oc}80,inset 0 0 30px ${theme.ring}40`;
+  inner.textContent=theme.ic;
+  inner.style.textShadow=`0 0 30px ${oc}`;
+
+  document.getElementById('rcBadge').textContent=isTruth?t.truthTag:t.dareTag;
+  document.getElementById('rcBadge').style.setProperty('--oc',oc);
+  document.getElementById('rcBadge').style.borderColor=oc;
+  document.getElementById('rcBadge').style.color=oc;
+  document.getElementById('rcEmoji').textContent=isTruth?'🤔':'🔥';
+  document.getElementById('rcPlayer').textContent=playerName;
+  document.getElementById('rcPlayer').style.color=oc;
+  document.getElementById('rcPlayer').style.textShadow=`0 0 20px ${oc}`;
+  document.getElementById('rcSub').textContent=lang==='ar'?'كُشِفت بطاقتك':'CARTE RÉVÉLÉE';
+  document.getElementById('rcOkBtn').textContent=isTruth?(lang==='ar'?'🤔 فهمت!':'🤔 J\'ai compris !'):(lang==='ar'?'🔥 قبلت التحدي!':'🔥 Je relève le défi !');
+
+  // SHOW overlay
+  ovl.classList.add('show');
+  ring.classList.remove('on');inner.classList.remove('on');card.classList.remove('show');
+  ring.style.transform='scale(.4)';
+
+  // 🔊 صوت البداية + دوران
+  _playSpin();
+
+  // start particles
+  _startPtcl(theme.ptcl);
+
+  // phase 1: spin ring
+  const spinDur=1500+Math.random()*700;
+  setTimeout(()=>{ring.classList.add('on');inner.classList.add('on');},30);
+  _spin(ring,spinDur,()=>{
+    // 🔊 صوت الانفجار عند الذروة
+    _playBoom();
+    // climax flash + boom
+    _flash(flash,`rgba(255,255,255,.85)`);
+    _boom(ovl,oc);
+    ring.classList.remove('on');
+    inner.classList.remove('on');
+
+    // phase 2: show result card
+    setTimeout(()=>{
+      _stopPtcl();
+      _celebrate(ovl,oc);
+      // 🔊 صوت الكشف عند ظهور البطاقة
+      _playReveal();
+      card.classList.add('show');
+    },250);
+  });
+}
+
+function closeOverlay(){
+  // 🔊 صوت الإغلاق
+  _playOk();
+  const ovl=document.getElementById('epicOvl');
+  const card=document.getElementById('resCard');
+  const ring=document.getElementById('spinRing');
+  const inner=document.getElementById('spinInner');
+
+  card.classList.remove('show');
+  ring.classList.remove('on');
+  inner.classList.remove('on');
+  _stopPtcl();
+  ovl.querySelectorAll('[style*="boomRing"],[style*="starPop"]').forEach(e=>e.remove());
+
+  setTimeout(()=>{
+    ovl.classList.remove('show');
+    // ✅ advance player NOW (after overlay closes)
+    advancePlayer();
+    // flip game card
+    const gameCard=document.getElementById('card');
+    gameCard.classList.remove('flipped');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>gameCard.classList.add('flipped')));
+    const isTruth=document.getElementById('rcBadge').textContent.includes('🤔')||document.getElementById('rcBadge').textContent.includes('صحيح');
+    burstConfetti(isTruth?['#1fe6e0','#5af0ec']:['#ff3d7f','#ffcd3c']);
+  },350);
+}
+
+function toggleSound(){
+  _sfxEnabled = !_sfxEnabled;
+  document.getElementById('soundBtn').textContent = _sfxEnabled ? '🔊' : '🔇';
+}
+
+function burstConfetti(colors){
+  for(let i=0;i<22;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[Math.random()<.5?0:1];
+    c.style.animationDuration=(1.6+Math.random()*1.2)+'s';
+    c.style.opacity=0.9;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
+document.getElementById('btnTruth').onclick = ()=>reveal('truths');
+document.getElementById('btnDare').onclick = ()=>reveal('dares');
+document.getElementById('resetBtn').onclick = ()=>{
+  turn = 0;
+  pools = {};
+  document.getElementById('turnCount').textContent = 0;
+  document.getElementById('card').classList.remove('flipped');
+};
+document.getElementById('backToSetupBtn').onclick = ()=>{
+  showScreen('players');
+  renderPlayers();
+};
+
+/* =================== LANGUAGE ===================*/
+function applyLangUI(){
+  const t = UI[lang];
+  const app = document.getElementById('app');
+  app.setAttribute('dir', lang==='ar' ? 'rtl' : 'ltr');
+
+  document.getElementById('subtitleText').textContent = t.subtitle;
+
+  document.getElementById('playersTitle').textContent = t.playersTitle;
+  document.getElementById('playersSub').textContent = t.playersSub;
+  document.getElementById('playerInput').placeholder = t.playerPlaceholder;
+  document.getElementById('playersEmptyText').textContent = t.playersEmptyText;
+  document.getElementById('shuffleLabel').textContent = t.shuffleLabel;
+  document.getElementById('nextLabel').textContent = t.next;
+  document.getElementById('nextArrow').textContent = t.arrow;
+
+  document.getElementById('backArrow').textContent = t.backArrow;
+  document.getElementById('backLabel').textContent = t.back;
+  document.getElementById('modeTitle').textContent = t.modeTitle;
+  document.getElementById('modeSub').textContent = t.modeSub;
+  document.getElementById('startLabel').textContent = modeOrigin === 'game' ? t.confirm : t.start;
+
+  document.getElementById('turnLabel').textContent = t.turn;
+  document.getElementById('labelTruth').textContent = t.truth;
+  document.getElementById('labelDare').textContent = t.dare;
+  document.getElementById('frontHint').textContent = t.frontHint;
+  document.getElementById('frontHintSub').textContent = t.frontHintSub;
+
+  document.getElementById('btnFr').classList.toggle('active', lang==='fr');
+  document.getElementById('btnAr').classList.toggle('active', lang==='ar');
+
+  updatePlayersGate();
+  renderPlayers();
+  if(mode){ renderModeGrid(); updateGameModePill(); }
+  renderTurnBanner();
+}
+
+document.getElementById('btnFr').onclick = ()=>{ lang='fr'; applyLangUI(); };
+document.getElementById('btnAr').onclick = ()=>{ lang='ar'; applyLangUI(); };
+
+/* init */
+document.getElementById('backBtn').style.display = 'inline-flex';
+applyLangUI();
+showScreen('players');
+</script>
+</body>
+</html>
